@@ -3,7 +3,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const cors = require('cors');
+
+//import of other files
 const DB_conncte = require('./config/DB')
+const { UserRouter } = require('./routes/UserRoutes.js');
 
 //db connection call
 
@@ -22,9 +25,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors()); 
 
+//middleware routes
+
+app.use('/api/users', UserRouter);
 
 //listen server
 app.listen( 3000, () => {
-    console.log(`server listening on ${port}`);
+    console.log(`server listening on 3000`);
     
 })
