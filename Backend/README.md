@@ -45,3 +45,49 @@ The request body should be sent in JSON format and must include the following fi
       "socketId": "<socket_id>"
     }
   }
+
+
+
+
+
+
+
+
+
+## Endpoint: `/user/login`
+
+### Description
+The `/user/login` endpoint is used to authenticate a user by verifying their credentials (email and password). Upon successful login, it generates a JWT token for the user.
+
+---
+
+### HTTP Method
+`POST`
+
+---
+
+### Request URL
+
+
+
+---
+
+### Request Headers
+- **Content-Type**: `application/json`
+
+---
+
+### Request Body
+The body of the request should be a JSON object containing the following fields:
+
+| Field      | Type     | Required | Description                               |
+|------------|----------|----------|-------------------------------------------|
+| `email`    | `string` | Yes      | The registered email of the user.         |
+| `password` | `string` | Yes      | The password associated with the user.    |
+
+**Example Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "StrongPassword@123"
+}
