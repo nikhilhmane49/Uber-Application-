@@ -10,7 +10,9 @@ const UserRegSchema = require('../models/User/UserRegModel');
 
 
 const AuthUser = async (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
+    const { token } = req.headers;
+    console.log(token);
+    
 
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
@@ -18,8 +20,11 @@ const AuthUser = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await UserRegSchema.findById(decoded._id);
-        req.user = user;
+      
+        
+        req.body.userid = decoded.id
+
+        
         next();
     } catch (error) {
         res.status(401).json({ message: 'Access denied. Invalid token.' });
