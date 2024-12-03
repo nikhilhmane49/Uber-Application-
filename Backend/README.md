@@ -91,3 +91,10 @@ The body of the request should be a JSON object containing the following fields:
   "email": "user@example.com",
   "password": "StrongPassword@123"
 }
+
+
+
+
+
+
+

@@ -12,6 +12,7 @@ const validator = require('validator');
 //importing the other files 
 
 const UserRegSchema = require('../models/User/UserRegModel');
+const blacklistTokenSchema = require('../models/User/BlacklistModel');
 
 //-------------------------------------userRegisteration
 
@@ -88,7 +89,7 @@ const userRegisteration = async (req, res) => {
         const newuser = await newUser.save();
         
         //genret the token
-        const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET , {expiresIn: '24h'});
 
 
 res.status(201).json({
@@ -147,7 +148,7 @@ const userLogin = async (req, res) => {
             });
           
         }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET , {expiresIn: '24h'});
         
         res.status(200).json({
             success: true,
@@ -193,5 +194,25 @@ const userProfile = async (req, res) => {
 }
 
 
+//=================Logout-user================
 
-module.exports = { userRegisteration ,userLogin ,userProfile};
+const userlogout = async (req, res) => {
+    try {
+        
+    const { token } = req.headers;
+        await blacklistTokenSchema.create({ token })
+
+        res.status(200).json({
+            success: true,
+            message: 'User logged out successfully'
+        });
+
+    } catch (error) {
+        
+    }
+}
+
+
+
+
+module.exports = { userRegisteration ,userLogin ,userProfile , userlogout};
