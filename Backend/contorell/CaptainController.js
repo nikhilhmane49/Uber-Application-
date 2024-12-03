@@ -1,4 +1,3 @@
-
 //install packages
 
 const express = require('express');
@@ -9,23 +8,26 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
 
-//importing the other files 
+//import the file from other file
 
-const UserRegSchema = require('../models/User/UserRegModel');
+const CaptainSchema = require('../models/Captain/CaptainModel');
 const blacklistTokenSchema = require('../models/User/BlacklistModel');
 
-//-------------------------------------userRegisteration
 
 
-const userRegisteration = async (req, res) => {
+//============registration of the captian
 
+const captainreg = async (req, res) => {
+    
     try {
-        const { fullname, email, password, socketId } = req.body;
-
-     const { firstname, lastname } = fullname;
+        //geting form request 
+        const { fullname, email, password, socketId, status, vehicle, location } = req.body;
+        const { firstname, lastname } = fullname;
+        const { color, plate, capacity, vehicleType } = vehicle;
+        const { lat, log } = location;
         
-//filled validation
-        if (!fullname|| !fullname.firstname || !fullname.lastname  || !email || !password) {
+        //filled validation
+        if (!fullname|| !fullname.firstname || !fullname.lastname  || !email || !password || !status || !vehicle.color || !vehicle.plate || !vehicle.capacity || !vehicle.vehicleType || !location.lat || !location.log) {
             return res.status(400).json({
                 success: false,
                 message: 'Please fill all the fields'
@@ -34,12 +36,12 @@ const userRegisteration = async (req, res) => {
 
         //User allready registration or not
         
-        const user = await UserRegSchema.findOne({ email });
+        const user = await CaptainSchema.findOne({ email });
 
         if (user) {
             return res.status(400).json({
                 success: false,
-                message: 'User already exists'
+                message: 'Captain already exists'
             });
         }
 
@@ -69,60 +71,60 @@ const userRegisteration = async (req, res) => {
             });
         }
 
-//hash the password
+       //hash the password
         const salt = await bcrypt.genSalt(10);
 
         const hashedPassword = await bcrypt.hash(password, salt);
 
-
         //save the data in the database
-        
         const userdata = {
             fullname: { firstname, lastname },
             email,
             password: hashedPassword,
-            socketId
+            socketId,
+            status,
+            vehicle: { color, plate, capacity, vehicleType },
+            location: { lat, log }
         }
 
 
-        const newUser = new UserRegSchema(userdata);
+        const newUser = new CaptainSchema(userdata);
         const newuser = await newUser.save();
         
         //genret the token
-        const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET , {expiresIn: '24h'});
-
-
-res.status(201).json({
+        const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        
+    res.status(201).json({
     success: true,
     token:token,
-    message: 'User registered successfully',
+    message: 'Captain registered successfully',
     data: newUser
 });
 
-
-    } 
-  catch (error) {
-    console.error(error);
+    } catch (error) {
+   console.error(error);
     res.status(500).json({
         success: false,
         message: 'An error occurred during registration',
         error: error.message
     });
+    
+    }
 }
 
-}
- 
+
+//==========================Captain login =========================
 
 
-//------------------------user login-----------------------
+const captainlogin = async (req, res) => { 
 
-const userLogin = async (req, res) => {
+
     try {
         
         const { email, password } = req.body;
 
+
         //filled validation
-        
         if (!email ||!password) {
             return res.status(400).json({
                 success: false,
@@ -130,15 +132,18 @@ const userLogin = async (req, res) => {
             });
         }
 
-        const user = await UserRegSchema.findOne({ email: email });
+        
+        const user = await CaptainSchema.findOne({ email: email });
 
         if (!user) {
             return res.status(400).json({
                 success: false,
-                message: 'User not found'
+                message: 'Captain not found'
             });
         }
 
+
+//comaepare the password fields 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) { 
@@ -148,16 +153,18 @@ const userLogin = async (req, res) => {
             });
           
         }
+
+        //gentrate the token 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET , {expiresIn: '24h'});
         
         res.status(200).json({
             success: true,
             token: token,
-            message: 'User logged in successfully'
+            message: 'Captain logged in successfully'
         })
 
     } catch (error) {
-  console.error(error);
+        console.error(error);
     res.status(500).json({
         success: false,
         message: 'An error occurred during registration',
@@ -166,17 +173,19 @@ const userLogin = async (req, res) => {
     }
 }
 
-//------------------------User profile
 
-const userProfile = async (req, res) => {
-    const { userid } = req.body;
+
+//==========================profile of captain
+
+const captainprofile = async (req, res) => { 
+const { captainid } = req.body;
     try {
-        const user = await UserRegSchema.findById(userid).select('-password');
+        const user = await CaptainSchema.findById(userid).select('-password');
 
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Captain not found'
             });
         }
 
@@ -191,12 +200,15 @@ const userProfile = async (req, res) => {
             message: 'Server Error'
         });
     }
+
+
 }
+
 
 
 //=================Logout-user================
 
-const userlogout = async (req, res) => {
+const captainlogout = async (req, res) => {
     try {
         
     const { token } = req.headers;
@@ -218,5 +230,4 @@ const userlogout = async (req, res) => {
 
 
 
-
-module.exports = { userRegisteration ,userLogin ,userProfile , userlogout};
+module.exports = { captainreg, captainlogin ,captainprofile ,captainlogout };

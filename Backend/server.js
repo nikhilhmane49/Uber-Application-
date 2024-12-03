@@ -7,6 +7,7 @@ const cors = require('cors');
 //import of other files
 const DB_conncte = require('./config/DB')
 const { UserRouter } = require('./routes/UserRoutes.js');
+const { CaptainRouter}=require('./routes/CaptainRoutes.js');
 
 //db connection call
 
@@ -28,6 +29,8 @@ app.use(cors());
 //middleware routes
 
 app.use('/api/users', UserRouter);
+
+app.use('/api/captains', CaptainRouter);
 
 //listen server
 app.listen( 3000, () => {
