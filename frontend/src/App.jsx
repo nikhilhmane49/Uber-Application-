@@ -12,15 +12,14 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/' component={Home} />
-        <Route path='/userlogin' component={UserLogin} />
-        <Route path='/usersignup' component={UserSignup} />
-        <Route path='/captainlogin' component={Captainlogin} />
-        <Route path='/captainsignup' component={CaptainSignup} />
-        
- </Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/userlogin" element={<UserLogin/>} />
+        <Route path="/usersignup" element={<UserSignup/>} />
+        <Route path="/captainlogin" element={<Captainlogin/>} />
+        <Route path="/captainsignup" element={<CaptainSignup/>} />
+      </Routes>
     </>
-  )
+  );
 }
 
 export default App
