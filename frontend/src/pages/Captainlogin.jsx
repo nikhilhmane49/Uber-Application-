@@ -56,7 +56,7 @@ function Captainlogin() {
           onSubmit={handleSubmit}
         >
           <h2 className="text-2xl font-bold text-center  text-blue-500">
-            Captain Signup
+            Captain Login
           </h2>
 
           <div>

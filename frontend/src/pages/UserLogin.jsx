@@ -55,7 +55,7 @@ function UserLogin() {
           onSubmit={handleSubmit}
         >
           <h2 className="text-2xl font-bold text-center  text-blue-500">
-            User Signup
+            User Login
           </h2>
 
           <div>
