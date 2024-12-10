@@ -1,18 +1,43 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { Userconetxtdata } from "../Context/Usercontext";
+import axios from "axios";
+import { toast } from "react-toastify";
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userdata, setUserdata] = useState({});
 
-  const handleSubmit = (e) => {
+  const { backend_url, token, setToken } = useContext(Userconetxtdata);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUserdata({
+    const loginuser = {
       email,
       password,
-    });
-      setEmail("");
-      setPassword("");
+    };
+
+    try {
+      const response = await axios.post(
+        `${backend_url}/api/users/user/login`,
+        loginuser
+      );
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        setToken(response.data.token);
+        toast.success("User Login successfully!");
+      } else {
+        toast.error("Failed to Login user. Please try again!");
+      }
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response?.data || error.message
+      );
+    }
+
+    setEmail("");
+    setPassword("");
     console.log(userdata);
   };
 

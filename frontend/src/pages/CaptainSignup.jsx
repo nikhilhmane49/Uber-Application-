@@ -1,25 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react"; // Import useContext
 import { Link } from "react-router-dom";
+import { Captainconetxtdata } from "../Context/Captaincontext"; // Context data
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function CaptainSignup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [captaindata, setCaptaindata] = useState({});
 
-  const handleSubmit = (e) => {
+  // Use useContext to access the context data
+  const { backend_url, token, setToken } = useContext(Captainconetxtdata);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setCaptaindata({
+    const newcaptain = {
       fullname: { firstname, lastname },
       email,
       password,
-    });
+    };
+
+    try {
+      const response = await axios.post(
+        `${backend_url}/api/captains/captain/register`,
+        newcaptain
+      );
+
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        setToken(response.data.token);
+        toast.success("User registered successfully!");
+      } else {
+        toast.error("Failed to register user. Please try again!");
+      }
+
+      console.log(response.data);
+      // Reset form fields
       setFirstname("");
       setLastname("");
       setEmail("");
       setPassword("");
-    console.log(captaindata);
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (

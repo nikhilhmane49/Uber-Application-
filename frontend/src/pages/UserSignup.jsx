@@ -1,26 +1,63 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Userconetxtdata } from "../Context/Usercontext";
+import axios from 'axios';
+import { toast } from "react-toastify";
+
 
 function UserSignup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userdata, setUserdata] = useState({});
+    const [userdata, setUserdata] = useState({});
 
-  const handleSubmit = (e) => {
+  const { backend_url, token , setToken } = useContext(Userconetxtdata);
+  
+  
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUserdata({
+    const newuser = {
       fullname: { firstname, lastname },
       email,
       password,
-    });
+    };
+
+    try {
+
+
+      const response = await axios.post(
+        `${backend_url}/api/users/user/register`,
+        newuser
+      );
+
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        setToken(response.data.token);
+        toast.success("User registered successfully!");
+        
+      }
+      else {
+        toast.error("Failed to register user. Please try again!");
+      }
+
+
+      console.log(response.data);
+      // Reset form fields
       setFirstname("");
       setLastname("");
       setEmail("");
       setPassword("");
-    console.log(userdata);
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response?.data || error.message
+      );
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
