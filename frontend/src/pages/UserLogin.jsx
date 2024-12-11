@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Userconetxtdata } from "../Context/Usercontext";
 import axios from "axios";
 import { toast } from "react-toastify";
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userdata, setUserdata] = useState({});
 
   const { backend_url, token, setToken } = useContext(Userconetxtdata);
+    const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +40,13 @@ function UserLogin() {
     setPassword("");
     console.log(userdata);
   };
+
+    useEffect(() => {
+      if (token) {
+        console.log("token is there");
+        
+      }
+    }, [token, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">

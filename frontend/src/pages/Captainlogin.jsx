@@ -1,21 +1,53 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Captainconetxtdata } from "../Context/Captaincontext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Captainlogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [captaindata, setCaptaindata] = useState({});
 
-  const handleSubmit = (e) => {
+  const { backend_url, token, setToken } = useContext(Captainconetxtdata);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setCaptaindata({
+    const logincaptain = {
       email,
       password,
-    });
-  
-      setEmail("");
-      setPassword("");
-    console.log(captaindata);
+    };
+
+    try {
+      const response = await axios.post(
+        `${backend_url}/api/captains/captain/login`,
+        logincaptain
+      );
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        setToken(response.data.token);
+        toast.success("User Login successfully!");
+        navigate("/");
+
+      } else {
+        toast.error("Failed to Login user. Please try again!");
+      }
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response?.data || error.message
+      );
+    }
+
+    setEmail("");
+    setPassword("");
   };
+
+  // useEffect(() => {
+  //   if (token) {
+  //     navigate("/");
+  //   }
+  // }, [token, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">

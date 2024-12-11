@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
 import { Userconetxtdata } from "../Context/Usercontext";
 import axios from 'axios';
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ function UserSignup() {
     const [userdata, setUserdata] = useState({});
 
   const { backend_url, token , setToken } = useContext(Userconetxtdata);
-  
+    const navigate = useNavigate();
   
 
   const handleSubmit = async (e) => {
@@ -58,6 +58,11 @@ function UserSignup() {
     }
   };
 
+    useEffect(() => {
+      if (token) {
+                console.log("token is there");
+      }
+    }, [token, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">

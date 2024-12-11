@@ -27,7 +27,7 @@ const captainreg = async (req, res) => {
         const { lat, log } = location;
         
         //filled validation
-        if (!fullname|| !fullname.firstname || !fullname.lastname  || !email || !password || !status || !vehicle.color || !vehicle.plate || !vehicle.capacity || !vehicle.vehicleType || !location.lat || !location.log) {
+        if (!fullname|| !fullname.firstname || !fullname.lastname  || !email || !password || !status || !vehicle.color || !vehicle.plate || !vehicle.capacity || !vehicle.vehicleType ) {
             return res.status(400).json({
                 success: false,
                 message: 'Please fill all the fields'
